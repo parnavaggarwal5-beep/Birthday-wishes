@@ -18,78 +18,77 @@
 
 <style>
 body {
-  margin: 0;
-  background: #ffe;
-  overflow: hidden;
+  margin:0;
+  overflow:hidden;
+
+  /* ✅ ORIGINAL STYLE BACKGROUND */
+  background: url('./file/bg.jpg') no-repeat center center fixed;
+  background-size: cover;
 }
 
-/* Canvas full */
+/* canvas */
 #canvas {
-  position: absolute;
-  left: 0;
-  top: 0;
-  transition: all 1.5s ease;
+  position:absolute;
+  left:0;
+  top:0;
+  transition:1.5s;
 }
 
-/* Shift canvas */
 .shift {
-  transform: translateX(-250px) scale(0.8);
+  transform:translateX(-250px) scale(0.8);
 }
 
-/* Envelope */
+/* envelope */
 .envelope {
-  position: absolute;
-  right: 100px;
-  top: 150px;
-  width: 320px;
-  height: 220px;
-  display: none;
-  cursor: pointer;
+  position:absolute;
+  right:80px;
+  top:150px;
+  width:320px;
+  height:220px;
+  display:none;
+  cursor:pointer;
 }
 
-.envelope.show {
-  display: block;
-}
+.envelope.show { display:block; }
 
-/* Envelope design */
 .flap {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(45deg, #ff6f91, #ffb6b9);
-  border-radius: 10px;
-  transform-origin: top;
-  transition: 0.8s;
+  position:absolute;
+  width:100%;
+  height:100%;
+  background:linear-gradient(45deg,#ff4d6d,#ffb3c1);
+  border-radius:15px;
+  transform-origin:top;
+  transition:.8s;
 }
 
 .envelope.open .flap {
-  transform: rotateX(180deg);
+  transform:rotateX(180deg);
 }
 
 .letter {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: #fffdf5;
-  padding: 20px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-  font-family: 'Dancing Script', cursive;
-  opacity: 0;
-  transform: translateY(50px);
-  transition: 1s;
-  border-radius: 10px;
+  position:absolute;
+  width:100%;
+  height:100%;
+  background:#fffdf5;
+  padding:20px;
+  font-family:'Dancing Script',cursive;
+  opacity:0;
+  transform:translateY(50px);
+  transition:1s;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,.3);
 }
 
 .envelope.open .letter {
-  opacity: 1;
-  transform: translateY(0);
+  opacity:1;
+  transform:translateY(0);
 }
 
-/* Text animation */
+/* text */
 .line {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: showLine 1s forwards;
+  opacity:0;
+  transform:translateY(20px);
+  animation:showLine 1s forwards;
 }
 
 .line:nth-child(1){animation-delay:1s;}
@@ -101,23 +100,37 @@ body {
   to {opacity:1; transform:translateY(0);}
 }
 
-/* Firework */
-.firework {
-  position: fixed;
-  width: 5px;
-  height: 5px;
-  background: red;
-  border-radius: 50%;
-  animation: explode 1s ease-out forwards;
+/* FIREWORK */
+.rocket {
+  position:fixed;
+  bottom:0;
+  width:3px;
+  height:20px;
+  background:white;
+  animation:rocketUp 1s linear forwards;
 }
 
-@keyframes explode {
-  from {transform: scale(1); opacity:1;}
-  to {transform: scale(20); opacity:0;}
+@keyframes rocketUp {
+  to { transform:translateY(-80vh); }
+}
+
+.spark {
+  position:fixed;
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  animation:spark 1s ease-out forwards;
+}
+
+@keyframes spark {
+  from {opacity:1;}
+  to {transform:translate(var(--x), var(--y)); opacity:0;}
 }
 </style>
 
 <script>
+let audio;
+
 function showEnvelope() {
   document.getElementById("canvas").classList.add("shift");
   document.querySelector(".envelope").classList.add("show");
@@ -125,29 +138,63 @@ function showEnvelope() {
 
 function openLetter() {
   document.querySelector(".envelope").classList.add("open");
-  launchFireworks();
+  audio.play();
+  startFireworks();
 }
 
-/* Firecracker */
-function launchFireworks() {
-  for(let i=0;i<20;i++){
-    let f = document.createElement("div");
-    f.className = "firework";
-    f.style.left = Math.random()*100+"vw";
-    f.style.top = Math.random()*100+"vh";
-    document.body.appendChild(f);
-    setTimeout(()=>f.remove(),1000);
-  }
+/* fireworks */
+function createFirework() {
+  let rocket = document.createElement("div");
+  rocket.className = "rocket";
+  rocket.style.left = Math.random()*100+"vw";
+  document.body.appendChild(rocket);
+
+  setTimeout(() => {
+    let x = rocket.getBoundingClientRect().left;
+    let y = rocket.getBoundingClientRect().top;
+    rocket.remove();
+
+    for(let i=0;i<30;i++){
+      let s = document.createElement("div");
+      s.className="spark";
+      s.style.left=x+"px";
+      s.style.top=y+"px";
+
+      let angle = Math.random()*360;
+      let dist = Math.random()*80;
+
+      s.style.setProperty("--x", Math.cos(angle)*dist+"px");
+      s.style.setProperty("--y", Math.sin(angle)*dist+"px");
+
+      s.style.background = `hsl(${Math.random()*360},100%,50%)`;
+
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(),1000);
+    }
+  },1000);
 }
+
+function startFireworks() {
+  [1000,2500,4000,5500,7000,9000].forEach(t=>{
+    setTimeout(createFirework,t);
+  });
+}
+
+window.onload = () => {
+  audio = document.getElementById("myAudio");
+};
 </script>
 
 </head>
 
 <body>
 
+<audio id="myAudio">
+  <source src="aud.mp3" type="audio/mp3">
+</audio>
+
 <canvas id="canvas" width="1100" height="680"></canvas>
 
-<!-- Envelope -->
 <div class="envelope" onclick="openLetter()">
   <div class="flap"></div>
   <div class="letter">
@@ -169,10 +216,10 @@ function launchFireworks() {
     canvas.attr("height", height);
 
     var opts = {
-        seed: { x: width/2-20, color:"rgb(190,26,37)", scale:2 },
-        branch: [[535,680,570,250,500,200,30,100]],
-        bloom: { num:500, width:1080, height:650 },
-        footer: { width:1200, height:5, speed:10 }
+        seed:{x:width/2-20,color:"rgb(190,26,37)",scale:2},
+        branch:[[535,680,570,250,500,200,30,100]],
+        bloom:{num:500,width:1080,height:650},
+        footer:{width:1200,height:5,speed:10}
     };
 
     var tree = new Tree(canvas[0], width, height, opts);
@@ -213,8 +260,7 @@ function launchFireworks() {
         $await(growAnimate());
         $await(flowAnimate());
 
-        // after tree complete → show envelope
-        setTimeout(showEnvelope, 1000);
+        setTimeout(showEnvelope,1000);
     }));
 
     runAsync().start();
