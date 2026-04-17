@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>HBD Love</title>
+<title>Happy Birthday ❤️</title>
 
 <script src="./file/jquery.min.js"></script>
 <script src="./file/jscex.min.js"></script>
@@ -14,14 +14,28 @@
 <script src="./file/functions.js"></script>
 <script src="./file/love.js"></script>
 
-<!-- Handwriting font -->
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
 
 <style>
 body {
   margin: 0;
-  background: #ffe;
+  background: linear-gradient(#ffe, #ffd6e0);
   text-align: center;
+  overflow-x: hidden;
+}
+
+/* Floating hearts */
+.heart {
+  position: fixed;
+  bottom: -10px;
+  color: red;
+  font-size: 20px;
+  animation: floatUp 6s linear infinite;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(0); opacity:1; }
+  100% { transform: translateY(-100vh); opacity:0; }
 }
 
 /* Envelope */
@@ -38,7 +52,7 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: #ff9aa2;
+  background: #ff6f91;
   transform-origin: top;
   transition: transform 0.8s;
   z-index: 2;
@@ -48,7 +62,7 @@ body {
   transform: rotateX(180deg);
 }
 
-/* Letter paper */
+/* Letter */
 .letter {
   position: absolute;
   width: 100%;
@@ -57,10 +71,11 @@ body {
   padding: 20px;
   box-sizing: border-box;
   opacity: 0;
-  transform: translateY(50px);
+  transform: translateY(60px);
   transition: all 1s ease;
   font-family: 'Dancing Script', cursive;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  border-radius: 10px;
 }
 
 .envelope.open .letter {
@@ -68,12 +83,12 @@ body {
   transform: translateY(0);
 }
 
-/* Letter text animation */
+/* Text animation */
 .line {
   opacity: 0;
   transform: translateY(20px);
   animation: showLine 1s ease forwards;
-  font-size: 20px;
+  font-size: 22px;
 }
 
 .line:nth-child(1) { animation-delay: 1s; }
@@ -102,13 +117,29 @@ function openLetter() {
 function playAudio() {
   document.getElementById("myAudio").play();
 }
+
+/* Floating hearts generator */
+function createHearts() {
+  setInterval(() => {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "❤️";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (15 + Math.random() * 20) + "px";
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 6000);
+  }, 300);
+}
+
+window.onload = createHearts;
 </script>
 
 </head>
 
 <body>
 
-<audio autoplay id="myAudio">
+<audio autoplay loop id="myAudio">
   <source src="aud.mp3" type="audio/mp3">
 </audio>
 
@@ -116,9 +147,9 @@ function playAudio() {
   <div class="flap"></div>
 
   <div class="letter">
-    <p class="line">Happy Birthday Parshi 🎈</p>
+    <p class="line">Happy Birthday 🎈</p>
     <p class="line">My beautiful wife 💕</p>
-    <p class="line">May God bless you 🍀</p>
+    <p class="line">May God bless you always 🍀</p>
     <p class="line">I love you forever ❤️</p>
   </div>
 </div>
